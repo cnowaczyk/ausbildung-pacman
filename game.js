@@ -122,7 +122,6 @@ class Level {
 
 
     checkLevelBoundries(sprite, requestedDirection) {
-        //let targetTile = sprite.currentTile.add(sprite.direction.vector);
 
         requestedDirection = requestedDirection ?? Direction.None;
         let currentTile = this.getCurrentTile(sprite);
@@ -171,6 +170,8 @@ class Level {
 
     init(game) {
         this.player = game.player;
+        this.entities = [];
+        this.sprites = [];
         this.loadFromStringArray(this.levelDef);
         this.player.init(game);
         for(let sprite of this.sprites) {
@@ -350,7 +351,7 @@ class CircleRenderer extends Renderer {
             game.context.arc(position.x + this.size.x/2, position.y + this.size.y/2, this.size.x * this.radius, 0, Math.PI * 2);
         }
         else {
-            game.context.ellipse(position.x + this.size.x/2, position.y + this.size.y/2, 0, this.size.x * this.radius, this.size.y * this.radius, 0, Math.PI * 2);
+            game.context.ellipse(position.x + this.size.x/2, position.y + this.size.y/2, this.size.x * this.radius, this.size.y * this.radius, 0, 0, Math.PI * 2);
         }
         game.context.fill();
     }
@@ -412,16 +413,18 @@ class Sprite extends Entity {
         let boundryCheckResult = game.level.checkLevelBoundries(this, requestedDirection);
         this.velocity = this.direction.vector.hadamardProduct(this.speed);
         let newPosition = this.position.add(this.velocity);
+        let max = game.level.getPosition(game.level.areaSize.x, game.level.areaSize.y);
+
         if (newPosition.x < 0 - this.size.x) {
-            newPosition.x = game.canvas.width;
+            newPosition.x = max.x;
         }
-        if (newPosition.x > game.canvas.width) {
+        if (newPosition.x > max.x) {
             newPosition.x = 0 - this.size.x;
         }
         if (newPosition.y < 0 - this.size.y) {
-            newPosition.y = game.canvas.height;
+            newPosition.y = max.y;
         }
-        if (newPosition.y > game.canvas.height) {
+        if (newPosition.y > max.y) {
             newPosition.y = 0 - this.size.y;
         }
         this.position = newPosition;

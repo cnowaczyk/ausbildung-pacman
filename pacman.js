@@ -70,13 +70,17 @@ class Ghost extends Sprite {
             requestDirection = this.direction;
         }
         super.update(game, requestDirection);
+        if (this.currentTile.equals(game.player.currentTile)) {
+            alert("Game Over!");
+            game.init();
+        }
     }
 }
 
 class PacmanLevel extends Level {
     levelDef = [
         "====== ======",
-        "=      o    =",
+        "=   o  o    =",
         "= ========= =",
         "= ========= =",
         "=   =====   =",
