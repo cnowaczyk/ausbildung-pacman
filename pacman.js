@@ -10,8 +10,8 @@ class Pacman extends Game {
         super.init();
     }
 
-    update(ticks) {
-        super.update(ticks);
+    update() {
+        super.update();
     }
 
     draw() {
@@ -37,30 +37,48 @@ class PointEntity extends Entity {
         super(level, tilePosition);
         this.renderer = new CircleRenderer(this.level, "yellow", 0.1);
         this.points = 1;
+        this.collected = false;
+    }
+
+    update(game) {
+        if (game.player.currentTile.equals(this.tilePosition)) {
+            if (!this.collected) {
+                game.player.score.add(this.points);
+                this.collected = true;
+            }
+        }
+    }
+
+    draw(game) {
+        if (!this.collected) {
+            super.draw(game);
+        }
     }
 }
 
 class PacmanLevel extends Level {
     levelDef = [
-        "===== =====",
-        "=         =",
-        "= ======= =",
-        "=   ===   =",
-        "=== === ===",
-        "    ===    ",
-        "=== === ===",
-        "=   ===   =",
-        "= ======= =",
-        "=....x....=",
-        "===== =====",
+        "====== ======",
+        "=           =",
+        "= ========= =",
+        "= ========= =",
+        "=   =====   =",
+        "=== ===== ===",
+        "    =====    ",
+        "=== ===== ===",
+        "=   =====   =",
+        "= ========= =",
+        "= ========= =",
+        "=.....x.....=",
+        "====== ======",
     ]
 
     constructor(game) {
         super(game);
     }
 
-    update(game, ticks) {
-        super.update(game, ticks);
+    update(game) {
+        super.update(game);
     }
 
 

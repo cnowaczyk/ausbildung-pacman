@@ -39,6 +39,7 @@ class Game {
 
     draw() {
         this.level.draw(this);
+        this.player.score.draw();
     }
 
     gameLoop(time) {
@@ -202,7 +203,6 @@ class Level {
             checkResult.availableDirections.push(sprite.direction);
             checkResult.availableDirections.push(oppositeDirection);
         }
-        console.log(sprite.direction);
         return checkResult;
     }
 
@@ -221,12 +221,12 @@ class Level {
     }
 
     update(game, ticks) {
-        this.player.sprite.update(game, ticks);
-        // for(let renderer of this.entities) {
-        //     renderer.update(game, ticks);
-        // }
+        this.player.sprite.update(game);
         for(let sprite of this.sprites) {
-            sprite.update(game, ticks);
+            sprite.update(game);
+        }
+        for(let entity of this.entities) {
+            entity.update(game);
         }
     }
 
@@ -417,6 +417,10 @@ class Entity {
     draw(game, position) {
         this.renderer.draw(game, position ?? this.position);
     }
+
+    update(game) {
+
+    }
 }
 
 class Tile extends Entity {
@@ -435,6 +439,7 @@ class Tile extends Entity {
 class Sprite extends Entity {
     constructor(level, tilePosition, renderer, framesPerTile) {
         super(level, tilePosition)
+        this.level = level;
         this.direction = Direction.None;
         this.framesPerTile = framesPerTile;
         //this.currentTile = tilePosition;
@@ -448,6 +453,9 @@ class Sprite extends Entity {
         // this.currentDirection = Direction.None;
         // this.currentTile;
         // this.targetTile;
+    }
+    get currentTile() {
+        return this.level.getCurrentTile(this);
     }
 
     get center() {
@@ -470,13 +478,13 @@ class Sprite extends Entity {
             newPosition.x = game.canvas.width;
         }
         if (newPosition.x > game.canvas.width) {
-            newPosition.x = 0;
+            newPosition.x = 0 - this.size.x;
         }
         if (newPosition.y < 0 - this.size.y) {
             newPosition.y = game.canvas.height;
         }
         if (newPosition.y > game.canvas.height) {
-            newPosition.y = 0;
+            newPosition.y = 0 - this.size.y;
         }
         this.position = newPosition;
     }
@@ -536,11 +544,39 @@ class Player {
         this.sprite;
         this.imageSrc = imageSrc;
         this.framesPerTile = framesPerTile;
+        this.score = new Score();
     }
 
+    get currentTile() {
+        return this.sprite.currentTile;
+    }
+
+
     init(game) {
+        this.score.init();
         this.sprite = new PlayerSprite(game.level, game.level.playerStartPosition, new ImageRenderer(game.level, this.imageSrc), this.framesPerTile);
         this.sprite.init(game);
+    }
+}
+
+
+class Score {
+    constructor() {
+        this.points = 0;
+        this.scoreValueElement = document.getElementById("score-value");
+    }
+
+    init() {
+        this.points = 0;
+    }
+
+    draw() {
+        this.scoreValueElement.textContent = this.points;
+
+    }
+
+    add(points) {
+        this.points += points;
     }
 }
 
