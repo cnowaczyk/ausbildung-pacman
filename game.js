@@ -124,6 +124,7 @@ class Level {
     checkLevelBoundries(sprite, requestedDirection) {
         //let targetTile = sprite.currentTile.add(sprite.direction.vector);
 
+        requestedDirection = requestedDirection ?? Direction.None;
         let currentTile = this.getCurrentTile(sprite);
         let tilePosition = this.getPosition(currentTile.x, currentTile.y);
 
@@ -177,7 +178,7 @@ class Level {
         }
     }
 
-    update(game, ticks) {
+    update(game) {
         this.player.sprite.update(game);
         for(let sprite of this.sprites) {
             sprite.update(game);
@@ -394,6 +395,7 @@ class Sprite extends Entity {
         this.renderer = renderer;
         this.position = level.getPosition(tilePosition.x, tilePosition.y);
         this.speed = new Vector(game.level.tileSize.x/this.framesPerTile, game.level.tileSize.y/this.framesPerTile);
+        this.availableDirections = [];
     }
     get currentTile() {
         return this.level.getCurrentTile(this);
@@ -423,6 +425,7 @@ class Sprite extends Entity {
             newPosition.y = 0 - this.size.y;
         }
         this.position = newPosition;
+        this.availableDirections = boundryCheckResult.availableDirections;
     }
 
     draw(game) {

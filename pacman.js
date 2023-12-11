@@ -56,10 +56,27 @@ class PointEntity extends Entity {
     }
 }
 
+class Ghost extends Sprite {
+    constructor(level, tilePosition, renderer, framesPerTile) {
+        super(level, tilePosition, renderer, framesPerTile);;
+    }
+
+    update(game, requestDirection) {
+        if (this.direction === Direction.None) {
+            let directionChoice = Math.floor(Math.random() * this.availableDirections.length);
+            requestDirection = this.availableDirections[directionChoice];
+        }
+        else {
+            requestDirection = this.direction;
+        }
+        super.update(game, requestDirection);
+    }
+}
+
 class PacmanLevel extends Level {
     levelDef = [
         "====== ======",
-        "=           =",
+        "=      o    =",
         "= ========= =",
         "= ========= =",
         "=   =====   =",
@@ -94,6 +111,10 @@ class PacmanLevel extends Level {
                     case '.':
                         this.levelData[y].push(new Tile(this, position, new Renderer(this)));
                         this.entities.push(new PointEntity(this, position));
+                        break;
+                    case 'o':
+                        this.levelData[y].push(new Tile(this, position, new Renderer(this)));
+                        this.sprites.push(new Ghost(this, position, new ImageRenderer(this, "img/ghost.png"), 20));
                         break;
                     default:
                         this.levelData[y].push(new Tile(this, position, new Renderer(this)));
