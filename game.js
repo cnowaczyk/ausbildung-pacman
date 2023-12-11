@@ -8,23 +8,11 @@ class Game {
         this.lastTimeStamp = 0;
     }
 
-
-    // drawSegment(x, y, color) {
-    //     this.context.fillStyle = color;
-    //     this.context.fillRect(this.tileSize.x * x, this.tileSize.y * y, this.tileSize.x - 1, this.tileSize.y - 1);
-    // }
-
     init() {
-        //this.player.init(this);
         this.level.init(this);
     }
 
-    // getRandomPos() {
-    //     return { x: Math.floor(Math.random() * this.areaSize.x), y: Math.floor(Math.random() * this.areaSize.y ) };
-    // }
-
     reset() {
-        //this.player.init();
         this.frameCount = 0;
     }
 
@@ -57,24 +45,6 @@ class Game {
     }
 }
 
-
-// class LevelLayout {
-//     constructor() {
-//         this.levelData = [];
-//     }
-
-//     add(tile, position) {
-//         if (!this.levelData[position.x]) {
-//             this.levelData[position.x] = [];
-//         }
-//         this.levelData[position.x][position.y] = tile;
-//     }
-
-//     get(position) {
-//         return this.levelData[position.x][position.y];
-//     }
-// }
-
 class BoundryCheckResult {
     constructor(tileReached) {
         this.tileReached = tileReached;
@@ -95,7 +65,6 @@ class Level {
         this.entities = [];
         this.levelData = [];
         this.playerStartPosition;
-        //this.levelLayout = new LevelLayout();
     }
     get tileSize() {
         return new Vector(Math.floor(this.canvas.width / this.areaSize.x), Math.floor(this.canvas.height / this.areaSize.y))
@@ -122,7 +91,6 @@ class Level {
         this.context.fillStyle = this.backgroundColor;
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
-
 
     /**
      * Liefert die linke obere Canvas Koordinate zu einer Tilekoordinate.
@@ -152,11 +120,6 @@ class Level {
         return new Vector(Math.floor(sprite.center.x / this.tileSize.x), Math.floor(sprite.center.y / this.tileSize.y));
     }
 
-    // tileReached(sprite) {
-    //     let currentTile = this.getCurrentTile(sprite);
-    //     let tilePosition = this.getPosition(currentTile.x, currentTile.y);
-    //     return sprite.position.approxEquals(tilePosition) ? tilePosition : null;
-    // }
 
     checkLevelBoundries(sprite, requestedDirection) {
         //let targetTile = sprite.currentTile.add(sprite.direction.vector);
@@ -176,7 +139,6 @@ class Level {
                     if (this.getLevelTile(currentTile.add(sprite.direction.vector)).blocks) {
                         sprite.direction = Direction.None;
                     }
-                    //checkResult.availableDirections.push(sprite.direction);
                 } 
                 else {
                     sprite.direction = requestedDirection;
@@ -206,15 +168,10 @@ class Level {
         return checkResult;
     }
 
-
-
     init(game) {
         this.player = game.player;
         this.loadFromStringArray(this.levelDef);
         this.player.init(game);
-        // for(let renderer of this.entities) {
-        //     renderer.init(game);
-        // }
         for(let sprite of this.sprites) {
             sprite.init(game);
         }
@@ -280,7 +237,6 @@ class Controller {
     }
 }
 
-
 class Vector {
     constructor(x, y) {
         this.x = x;
@@ -300,8 +256,6 @@ class Vector {
     }
 
     approxEquals(v, variance = 1) {
-        //let variance = 1;
-        //return this.x <= v.x + variance && this.x >= v.x - variance && this.y <= v.y + variance && this.y >= vy - variance;
         return Math.abs(this.x - v.x) < variance && Math.abs(this.y - v.y) < variance;
     }
 
@@ -344,7 +298,6 @@ class Renderer {
     constructor(level) {
         this.size = new Vector(level.tileSize.x, level.tileSize.y);
     }
-
 
     draw(game, position) {
     }
@@ -402,7 +355,6 @@ class CircleRenderer extends Renderer {
     }
 }
 
-
 class Entity {
 
     constructor(level, tilePosition, renderer) {
@@ -419,7 +371,6 @@ class Entity {
     }
 
     update(game) {
-
     }
 }
 
@@ -434,25 +385,15 @@ class Tile extends Entity {
     }
 }
 
-
-
 class Sprite extends Entity {
     constructor(level, tilePosition, renderer, framesPerTile) {
         super(level, tilePosition)
         this.level = level;
         this.direction = Direction.None;
         this.framesPerTile = framesPerTile;
-        //this.currentTile = tilePosition;
         this.renderer = renderer;
         this.position = level.getPosition(tilePosition.x, tilePosition.y);
         this.speed = new Vector(game.level.tileSize.x/this.framesPerTile, game.level.tileSize.y/this.framesPerTile);
-        // this.spriteSrc = spriteSrc;
-        // this.velocity = new Vector(0, 0);
-        // this.speed;
-        // this.direction = Direction.None;
-        // this.currentDirection = Direction.None;
-        // this.currentTile;
-        // this.targetTile;
     }
     get currentTile() {
         return this.level.getCurrentTile(this);
@@ -463,15 +404,10 @@ class Sprite extends Entity {
     }
 
     init(game) {
-        // //this.renderer = new ImageRenderer(game.level, new Vector(0,0), this.imageSrc);
-        // this.renderer.init(game);
-        
-        // this.currentTile = game.level.getCurrentTile(this);
     }
 
     update(game, requestedDirection) {
         let boundryCheckResult = game.level.checkLevelBoundries(this, requestedDirection);
-        //this.direction = boundryCheckResult.availableDirections[0];
         this.velocity = this.direction.vector.hadamardProduct(this.speed);
         let newPosition = this.position.add(this.velocity);
         if (newPosition.x < 0 - this.size.x) {
@@ -506,38 +442,13 @@ class PlayerSprite extends Sprite {
     }
 
     update(game) {
-        //console.log(ticks);
         super.update(game, this.controller.direction);
-        //this.direction = this.controller.direction;
-        //console.log(this.controller.direction);
-        //this.currentDirection = this.controller.direction;
-        
     }
 
     draw(game) {
-        // let ctx = game.context;
-        // ctx.save();
-        // switch(true) {
-        //     case this.currentDirection.x > 0:
-        //         break;
-        //     case this.currentDirection.x < 0:
-        //             ctx.translate(this.position.x + this.width/2, 0);
-        //             ctx.scale(-1, 1);
-        //         break;
-        //     case this.currentDirection.y > 0:
-        //             ctx.translate(this.position.x + this.width/2, this.position.y + this.width/2);
-        //             ctx.rotate(Math.PI/2);
-        //         break;
-        //     case this.currentDirection.y < 0:
-        //             ctx.translate(this.position.x + this.width/2, this.position.y + this.width/2);
-        //             ctx.rotate(-Math.PI/2);
-        //         break;
-        // }
         super.draw(game, this.position);
-        // ctx.restore();
     }
 }
-
 
 class Player {
     constructor(imageSrc, framesPerTile) {
@@ -551,14 +462,12 @@ class Player {
         return this.sprite.currentTile;
     }
 
-
     init(game) {
         this.score.init();
         this.sprite = new PlayerSprite(game.level, game.level.playerStartPosition, new ImageRenderer(game.level, this.imageSrc), this.framesPerTile);
         this.sprite.init(game);
     }
 }
-
 
 class Score {
     constructor() {
@@ -579,7 +488,3 @@ class Score {
         this.points += points;
     }
 }
-
-// let game = new Game(document.getElementById("canvas"));
-
-// game.run();
